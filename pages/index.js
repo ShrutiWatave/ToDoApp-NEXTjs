@@ -5,23 +5,32 @@ import { useState } from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const [todo, setTodo] = useState({title:"", desc:""})
-  const addTodo = () => { 
-    let todos = localStorage.getItem("todos")
-    if(todos){
-      let todosJson = JSON.parse(todos)
-      console.log(todosJson)
-      todosJson.push(todo)
-      localStorage.setItem("todos", JSON.stringify(todosJson))
+  const [todo, setTodo] = useState({ title: "", desc: "" });
+  const addTodo = () => {
+    let todos = localStorage.getItem("todos");
+    if (todos) {
+      let todosJson = JSON.parse(todos);
+      if (
+        todosJson.filter((value) => {
+          return value.title == todo.title;
+        }).length > 0
+      )
+        alert("ToDo with this title already exists!");
+      else {
+        todosJson.push(todo);
+        localStorage.setItem("todos", JSON.stringify(todosJson));
+        alert("ToDo added successfully!");
+      }
+    } else {
+      localStorage.setItem("todos", JSON.stringify([todo]));
+      alert("ToDo added successfully!");
     }
-    else{
-      localStorage.setItem("todos",JSON.stringify([todo]))
-    }
-  }
-  const onChange = (e) => { 
-    setTodo({...todo, [e.target.name]:e.target.value})
-    console.log(todo)
-   }
+    setTodo({title:"", desc:""})
+  };
+  const onChange = (e) => {
+    setTodo({ ...todo, [e.target.name]: e.target.value });
+    console.log(todo);
+  };
   return (
     <div>
       <section class="text-gray-600 body-font">
@@ -56,7 +65,10 @@ export default function Home() {
                 onChange={onChange}
               />
             </div>
-            <button class="text-white bg-indigo-500 border-0 py-2 px-8 w-fit focus:outline-none hover:bg-indigo-600 rounded text-lg" onClick={addTodo}>
+            <button
+              class="text-white bg-indigo-500 border-0 py-2 px-8 w-fit focus:outline-none hover:bg-indigo-600 rounded text-lg"
+              onClick={addTodo}
+            >
               Add ToDo
             </button>
             <p class="text-xs text-gray-500 mt-3">
